@@ -1,0 +1,29 @@
+name: Build crossToolchain
+
+on:
+  push:
+    paths:
+      - "pkgs/**"
+      - "flake.nix"
+  pull_request:
+    paths:
+      - "pkgs/**"
+      - "flake.nix"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+        with:
+          extra_nix_config: "experimental-features = nix-command flakes"
+
+      - name: Build binutils
+        run: nix build .#packages.x86_64-linux.crossToolchain.binutils
+
+      - name: Build gcc
+        run: nix build .#packages.x86_64-linux.crossToolchain.gcc
+

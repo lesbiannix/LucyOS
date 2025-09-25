@@ -1,0 +1,35 @@
+name: CI Matrix
+
+on:
+  push:
+    paths:
+      - "pkgs/**"
+      - "flake.nix"
+  pull_request:
+    paths:
+      - "pkgs/**"
+      - "flake.nix"
+
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        system: [ "x86_64-linux", "aarch64-linux" ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+        with:
+          extra_nix_config: "experimental-features = nix-command flakes"
+
+      - name: Build crossToolchain (binutils)
+        run: nix build .#packages.${{ matrix.system }}.crossToolchain.binutils
+
+      - name: Build crossToolchain (gcc)
+        run: nix build .#packages.${{ matrix.system }}.crossToolchain.gcc
+
+      - name: Run nixfmt
+        run: nix flake check .#checks.${{ matrix.system }}.nixfmt
+
