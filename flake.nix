@@ -12,10 +12,6 @@
       pkgs = nixpkgs.legacyPackages.${system};
       lib = pkgs.lib;
 
-      # fileset is used to input kernel configuration file for use in `linuxKernelStage`
-
-      fs = lib.fileset;
-
       binutilsStage = import ./pkgs/by-name/bi/binutils/crossToolchain.nix { pkgs = pkgs; };
       gccStage = import ./pkgs/by-name/gc/gcc/pass_one.nix {
         pkgs = pkgs;

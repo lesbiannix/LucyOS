@@ -16,21 +16,21 @@ let
 
     src = pkgs.fetchurl {
       url = "https://ftp.fau.de/gnu/gcc/gcc-15.2.0/gcc-15.2.0.tar.gz";
-      sha256 = "";
+      sha256 = "sha256-cpTWXMGgVYy4Fa8MqMd2PYb3oxGZeU7eP2MMDRsKVyM=";
     };
 
     secondarySrcs = [
       (pkgs.fetchurl {
         url = "https://ftp.fau.de/gnu/mpfr/mpfr-4.2.2.tar.gz";
-        sha256 = "";
+        sha256 = "sha256-gmy7JGEL0ZPzb94XIjP7jACfP1wq2Z9kTQ3qLhaiDkI=";
       })
       (pkgs.fetchurl {
         url = "https://ftp.fau.de/gnu/gmp/gmp-6.3.0.tar.xz";
-        sha256 = "";
+        sha256 = "sha256-o8K4AgG4nmhhb0rTC8Zq7kknw85Q4zkpyoGdXENTiJg=";
       })
       (pkgs.fetchurl {
         url = "https://ftp.fau.de/gnu/mpc/mpc-1.3.1.tar.gz";
-        sha256 = "";
+        sha256 = "sha256-q2QkkvXPiCt0qgy3MM1BCoHtzb7IlRg86TDnBsHHWbg=";
       })
     ];
 
