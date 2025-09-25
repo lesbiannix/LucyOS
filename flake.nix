@@ -17,10 +17,15 @@
       fs = lib.fileset;
 
       binutilsStage = import ./pkgs/by-name/bi/binutils/crossToolchain.nix { pkgs = pkgs; };
+      gccStage = import ./pkgs/by-name/gc/gcc/pass_one.nix {
+        pkgs = pkgs;
+        binutils = binutilsStage;
+      };
     in
     {
       packages.${system}.crossToolchain = {
         binutils = binutilsStage;
+        gcc = gccStage;
       };
     };
 }
