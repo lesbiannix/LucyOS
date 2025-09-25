@@ -1,8 +1,8 @@
 {
-  description = "A very basic flake";
+  description = "LucyOS cross-toolchain flake (nixpkgs-style)";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs =
@@ -10,8 +10,8 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-      lib = pkgs.lib;
 
+      # Import stages
       binutilsStage = import ./pkgs/by-name/bi/binutils/crossToolchain.nix { pkgs = pkgs; };
       gccStage = import ./pkgs/by-name/gc/gcc/pass_one.nix {
         pkgs = pkgs;
@@ -19,9 +19,36 @@
       };
     in
     {
-      packages.${system}.crossToolchain = {
-        binutils = binutilsStage;
-        gcc = gccStage;
+      packages.${system} = {
+        # Cross-toolchain as a set of derivations
+        crossToolchain = {
+          binutils = binutilsStage;
+          gcc = gccStage;
+        };
+      };
+
+      checks.${system} = {
+        # Build binutils
+        binutils = pkgs.runCommand "binutils-check" { } ''
+          echo "Checking crossToolchain/binutils..."
+          # Simply depend on the derivation
+          ${binutilsStage}
+          echo "binutils check succeeded"
+        '';
+
+        # Build gcc (depends on binutils via normal derivation)
+        gcc = pkgs.runCommand "gcc-check" { } ''
+          echo "Checking crossToolchain/gcc..."
+          ${gccStage}
+          echo "gcc check succeeded"
+        '';
+
+        # Optional: Nix formatting/lint
+        nixfmt = pkgs.runCommand "nixfmt-check" { } ''
+          echo "Checking Nix formatting..."
+          nix fmt --check ./pkgs || exit 1
+          echo "Formatting OK"
+        '';
       };
     };
 }
