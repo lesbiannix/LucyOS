@@ -1,0 +1,26 @@
+{
+  description = "A very basic flake";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+  };
+
+  outputs =
+    { self, nixpkgs }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+      lib = pkgs.lib;
+
+      # fileset is used to input kernel configuration file for use in `linuxKernelStage`
+
+      fs = lib.fileset;
+
+      binutilsStage = import ./pkgs/by-name/bi/binutils/crossToolchain.nix { pkgs = pkgs; };
+    in
+    {
+      packages.${system}.crossToolchain = {
+        binutils = binutilsStage;
+      };
+    };
+}
